@@ -202,7 +202,7 @@ std::shared_ptr<SuperBlock> ParseDNA(std::shared_ptr<std::vector<char>> DnaPtr)
 	index = ReadStringEntry(fdPtr, index, UKBlock3->SubBlock1_CTRLNames);
 	index = ReadStringEntry(fdPtr, index, UKBlock3->SubBlock2_ExpressionNames);
 	index = ReadStringEntry(fdPtr, index, UKBlock3->SubBlock3_FacialJointNames);
-	index = ReadStringEntry(fdPtr, index, UKBlock3->SubBlock4_OtherJointNames);
+	index = ReadStringEntry(fdPtr, index, UKBlock3->SubBlock4_CorrectiveBlendShapeNames);
 	index = ReadStringEntry(fdPtr, index, UKBlock3->SubBlock5_OtherStrings);
 	index = ReadStringEntry(fdPtr, index, UKBlock3->SubBlock6_Meshes);
 
@@ -282,7 +282,7 @@ std::shared_ptr<std::vector<char>> SerialiseDna(std::shared_ptr<SuperBlock> BlkP
 	index = WriteStringEntry(serialPtr, index, BlkPtr->Block3->SubBlock1_CTRLNames);
 	index = WriteStringEntry(serialPtr, index, BlkPtr->Block3->SubBlock2_ExpressionNames);
 	index = WriteStringEntry(serialPtr, index, BlkPtr->Block3->SubBlock3_FacialJointNames);
-	index = WriteStringEntry(serialPtr, index, BlkPtr->Block3->SubBlock4_OtherJointNames);
+	index = WriteStringEntry(serialPtr, index, BlkPtr->Block3->SubBlock4_CorrectiveBlendShapeNames);
 	index = WriteStringEntry(serialPtr, index, BlkPtr->Block3->SubBlock5_OtherStrings);
 	index = WriteStringEntry(serialPtr, index, BlkPtr->Block3->SubBlock6_Meshes);
 	index = WriteShortEntry(serialPtr, index, BlkPtr->Block3->SubBlock7);

@@ -114,7 +114,7 @@ struct Block3
 	StringEntries SubBlock3_FacialJointNames;
 
 	// Listed as Bs outputs in Maya
-	StringEntries SubBlock4_OtherJointNames;
+	StringEntries SubBlock4_CorrectiveBlendShapeNames;
 
 	// Listed as Am outputs in Maya 
 	StringEntries SubBlock5_OtherStrings;
