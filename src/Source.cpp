@@ -3,7 +3,15 @@
 #include <iostream>
 #include <vector>
 #include <optional>
+#include "Bones.h"
 #include "Types.h"
+
+
+// Helper
+bool CompareFloat(float a, float b, float threshold = 0.0001f)
+{
+	return fabs(a - b) > threshold;
+}
 
 std::optional<std::shared_ptr<std::vector<char>>> ReadToVector(std::ifstream& InStream)
 {
@@ -525,23 +533,84 @@ int main(int argc, char** argv)
 	}
 	else if (argc > 2)
 	{
-		std::ifstream FirstDNA(argv[1], std::ios::ate | std::ios::binary);
-		std::ifstream SecondDNA(argv[2], std::ios::ate | std::ios::binary);
+		auto DnaOpt = ReadDNAFile(argv[1]);
+		auto Import = LoadFileFromPath(argv[2]);
 
-		if (FirstDNA && SecondDNA)
+		if (DnaOpt && Import->Scene)
 		{
-			// Create vectors
-			auto FirstDNADataOpt = ReadToVector(FirstDNA);
-			auto SecondDNADataOpt = ReadToVector(SecondDNA);
+			auto SuperBlk = DnaOpt.value();
 
-			if (FirstDNADataOpt && SecondDNADataOpt)
+			auto SuperSerial = SerialiseDna(SuperBlk);
+
+			auto FBXBones = GetBones(Import);
+
+
+			for (uint16_t i = 0; i < SuperBlk->Block3->SubBlock10.EntryCount; ++i)
 			{
-				auto FirstDNAData = FirstDNADataOpt.value();
-				auto SecondDNAData = SecondDNADataOpt.value();
+				uint16_t Little1 = i;
+				std::string cBoneName;
 
-				std::cout << "Files deviate by " << std::dec << CalculateFileDiff(FirstDNAData, SecondDNAData) << "%" << std::endl;
+				// Lookup Bone Name
+				if (Little1 < SuperBlk->Block3->SubBlock3_FacialJointNames.EntryCount)
+				{
+					std::cout << SuperBlk->Block3->SubBlock3_FacialJointNames.Entries[Little1].Src << " (" << Little1 << ")";
+					cBoneName = std::string(SuperBlk->Block3->SubBlock3_FacialJointNames.Entries[Little1].Src);
+				}
+				else
+				{
+					std::cout << "BadIndex_" << Little1;
+				}
+
+				std::cout << " -> " << std::endl;
+
+				// Lookup Bone Name Positions
+				if (Little1 < SuperBlk->Block3->SubBlock10.EntryCount && FBXBones->contains(cBoneName))
+				{
+					if (CompareFloat(SuperBlk->Block3->SubBlock10.Entries[Little1], (*FBXBones)[cBoneName].BonePosition.x))
+					{
+						std::cout << "\t\tX " << SuperBlk->Block3->SubBlock10.Entries[Little1] << " -> " << (*FBXBones)[cBoneName].BonePosition.x << std::endl;
+						SuperBlk->Block3->SubBlock10.Entries[Little1] = (*FBXBones)[cBoneName].BonePosition.x;
+					}
+
+					if (CompareFloat(SuperBlk->Block3->SubBlock11.Entries[Little1],(*FBXBones)[cBoneName].BonePosition.y))
+					{
+						std::cout << "\t\tY " << SuperBlk->Block3->SubBlock11.Entries[Little1] << " -> " << (*FBXBones)[cBoneName].BonePosition.y << std::endl;
+						SuperBlk->Block3->SubBlock11.Entries[Little1] = (*FBXBones)[cBoneName].BonePosition.y;
+					}
+
+					if (CompareFloat(SuperBlk->Block3->SubBlock12.Entries[Little1], (*FBXBones)[cBoneName].BonePosition.z))
+					{
+						std::cout << "\t\tZ " << SuperBlk->Block3->SubBlock12.Entries[Little1] << " -> " << (*FBXBones)[cBoneName].BonePosition.z << std::endl;
+						SuperBlk->Block3->SubBlock12.Entries[Little1] = (*FBXBones)[cBoneName].BonePosition.z;
+					}
+
+					if (CompareFloat(SuperBlk->Block3->SubBlock13_JointOrientationX.Entries[Little1], (*FBXBones)[cBoneName].BoneOrientation.x))
+					{
+						std::cout << "\t\tRX " << SuperBlk->Block3->SubBlock13_JointOrientationX.Entries[Little1] << " -> " << (*FBXBones)[cBoneName].BoneOrientation.x << std::endl;
+					}
+
+					if (CompareFloat(SuperBlk->Block3->SubBlock14_JointOrientationY.Entries[Little1], (*FBXBones)[cBoneName].BoneOrientation.y))
+					{
+						std::cout << "\t\tRY " << SuperBlk->Block3->SubBlock14_JointOrientationY.Entries[Little1] << " -> " << (*FBXBones)[cBoneName].BoneOrientation.y << std::endl;
+					}
+
+					if (CompareFloat(SuperBlk->Block3->SubBlock15_JointOrientationZ.Entries[Little1], (*FBXBones)[cBoneName].BoneOrientation.z))
+					{
+						std::cout << "\t\tRZ " << SuperBlk->Block3->SubBlock15_JointOrientationZ.Entries[Little1] << " -> " << (*FBXBones)[cBoneName].BoneOrientation.z << std::endl;
+					}
+				}
+				else
+				{
+					std::cout << "BadIndex_" << Little1;
+				}
+				std::cout << std::endl;
+
 			}
-		}		
+
+			
+			
+			WriteDNAFile("test.dna", SuperBlk);
+		}	
 	}
 	
 	return 0;
