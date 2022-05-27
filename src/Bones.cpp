@@ -85,7 +85,7 @@ void BoneRecursiveDescent(std::shared_ptr<std::unordered_map<std::string, Bone>>
 
 		if (cleanStr.compare("spine_04") == 0)
 		{
-			std::cout << "Ew" << std::endl;
+			std::cout << "Skipping Spine04. The head is rebased onto the body's version of this bone." << std::endl;
 		}
 
 		if (IsBanned(nameStr))

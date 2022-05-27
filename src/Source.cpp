@@ -493,38 +493,6 @@ int main(int argc, char** argv)
 				std::cout << std::endl;
 
 			}
-
-
-			//for (uint16_t i = 0; i < SuperBlk->Block1->SubBlock3.EntryCount; ++i)
-			//{
-			//	uint16_t Little1 = i;
-			//	uint16_t Little2 = SuperBlk->Block1->SubBlock3.Entries[i];
-
-			//	// Lookup Bone Name
-			//	if (Little1 < SuperBlk->Block3->SubBlock2_ExpressionNames.EntryCount)
-			//	{
-			//		std::cout << SuperBlk->Block3->SubBlock2_ExpressionNames.Entries[Little1].Src << " (" << Little1 << ")";
-			//	}
-			//	else
-			//	{
-			//		std::cout << "BadIndex_" << Little1;
-			//	}
-
-			//	std::cout << " -> ";
-
-			//	// Lookup Bone Name
-			//	if (Little2 < SuperBlk->Block3->SubBlock3_FacialJointNames.EntryCount)
-			//	{
-			//		std::cout << SuperBlk->Block3->SubBlock3_FacialJointNames.Entries[Little2].Src << " (" << Little2 << ")";;
-			//	}
-			//	else
-			//	{
-			//		std::cout << "BadIndex_" << Little2;
-			//	}
-
-			//	std::cout << std::endl;
-
-			//}
 		}
 		else
 		{
@@ -564,6 +532,7 @@ int main(int argc, char** argv)
 				std::cout << " -> " << std::endl;
 
 				// Lookup Bone Name Positions
+				// Mostly for debugging purposes
 				if (Little1 < SuperBlk->Block3->SubBlock10.EntryCount && FBXBones->contains(cBoneName))
 				{
 					if (CompareFloat(SuperBlk->Block3->SubBlock10.Entries[Little1], (*FBXBones)[cBoneName].BonePosition.x))
@@ -606,8 +575,6 @@ int main(int argc, char** argv)
 				std::cout << std::endl;
 
 			}
-
-			
 			
 			WriteDNAFile("test.dna", SuperBlk);
 		}	
